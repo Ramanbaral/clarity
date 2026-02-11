@@ -8,6 +8,9 @@ import {
   Delete,
   Req,
   UseGuards,
+  HttpCode,
+  ParseUUIDPipe,
+  HttpStatus,
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
@@ -25,8 +28,8 @@ export class TransactionsController {
   }
 
   @Get()
-  findAll() {
-    return this.transactionsService.findAll();
+  findAllTransactions(@Req() req) {
+    return this.transactionsService.findAllTransactions(req.user.id);
   }
 
   @Get(':id')
@@ -38,12 +41,18 @@ export class TransactionsController {
   update(
     @Param('id') id: string,
     @Body() updateTransactionDto: UpdateTransactionDto,
+    @Req() req,
   ) {
-    return this.transactionsService.update(+id, updateTransactionDto);
+    return this.transactionsService.update(
+      id,
+      updateTransactionDto,
+      req.user.id,
+    );
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.transactionsService.remove(+id);
+  @HttpCode(HttpStatus.OK)
+  remove(@Param('id', ParseUUIDPipe) id: string, @Req() req) {
+    return this.transactionsService.remove(id, req.user.id);
   }
 }
