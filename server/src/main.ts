@@ -7,6 +7,8 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api/v1');
 
+  app.enableCors();
+
   const config = new DocumentBuilder()
     .setTitle('Clarity API')
     .setDescription('Personal Expense Tracker API documentation')
