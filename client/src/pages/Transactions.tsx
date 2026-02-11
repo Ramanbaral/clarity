@@ -1,9 +1,444 @@
 import Nav from "../components/Nav";
+import { useState } from "react";
+import { Filter, Pencil, Trash2, X, GripVertical } from "lucide-react";
+
+// Sample transaction data
+const sampleTransactions = [
+  {
+    id: 1,
+    title: "Investment",
+    category: "Investment",
+    amount: 1000.0,
+    type: "income",
+    date: "Feb 11, 2026",
+    icon: "📈",
+  },
+];
+
+// Category options
+const categories = [
+  { value: "all", label: "All Categories" },
+  { value: "food", label: "Food & Dining", icon: "🍽️" },
+  { value: "transportation", label: "Transportation", icon: "🚗" },
+  { value: "shopping", label: "Shopping", icon: "🛒" },
+  { value: "entertainment", label: "Entertainment", icon: "🎬" },
+  { value: "bills", label: "Bills & Utilities", icon: "📄" },
+  { value: "investment", label: "Investment", icon: "📈" },
+  { value: "salary", label: "Salary", icon: "💰" },
+  { value: "other", label: "Other", icon: "📦" },
+];
+
+// Type options
+const typeOptions = [
+  { value: "all", label: "All Types" },
+  { value: "income", label: "Income" },
+  { value: "expense", label: "Expense" },
+];
+
+interface Transaction {
+  id: number;
+  title: string;
+  category: string;
+  amount: number;
+  type: string;
+  date: string;
+  icon: string;
+}
 
 function Transactions() {
+  const [transactions, setTransactions] =
+    useState<Transaction[]>(sampleTransactions);
+  const [showFilters, setShowFilters] = useState(false);
+  const [filterCategory, setFilterCategory] = useState("all");
+  const [filterType, setFilterType] = useState("all");
+
+  // Edit modal state
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingTransaction, setEditingTransaction] =
+    useState<Transaction | null>(null);
+  const [editForm, setEditForm] = useState({
+    title: "",
+    category: "",
+    amount: "",
+    type: "expense",
+  });
+
+  // Delete confirmation state
+  const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 2,
+    }).format(amount);
+  };
+
+  // Filter transactions
+  const filteredTransactions = transactions.filter((t) => {
+    const categoryMatch =
+      filterCategory === "all" ||
+      t.category.toLowerCase() === filterCategory.toLowerCase();
+    const typeMatch = filterType === "all" || t.type === filterType;
+    return categoryMatch && typeMatch;
+  });
+
+  // Handle edit
+  const handleEdit = (transaction: Transaction) => {
+    setEditingTransaction(transaction);
+    setEditForm({
+      title: transaction.title,
+      category: transaction.category.toLowerCase(),
+      amount: transaction.amount.toString(),
+      type: transaction.type,
+    });
+    setIsEditModalOpen(true);
+  };
+
+  // Handle save edit
+  const handleSaveEdit = () => {
+    if (!editingTransaction) return;
+
+    const categoryInfo = categories.find((c) => c.value === editForm.category);
+
+    setTransactions((prev) =>
+      prev.map((t) =>
+        t.id === editingTransaction.id
+          ? {
+              ...t,
+              title: editForm.title,
+              category: categoryInfo?.label || editForm.category || t.category,
+              amount: parseFloat(editForm.amount),
+              type: editForm.type,
+              icon: categoryInfo?.icon || t.icon,
+            }
+          : t,
+      ),
+    );
+    setIsEditModalOpen(false);
+    setEditingTransaction(null);
+  };
+
+  // Handle delete
+  const handleDelete = (id: number) => {
+    setTransactions((prev) => prev.filter((t) => t.id !== id));
+    setDeleteConfirmId(null);
+  };
+
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50">
       <Nav />
+      <div className="pt-20 pb-8 px-4 sm:px-6 lg:px-10 max-w-7xl mx-auto">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-800">
+              Transactions
+            </h2>
+            <p className="text-gray-500 text-xs sm:text-sm mt-1">
+              {filteredTransactions.length} transaction
+              {filteredTransactions.length !== 1 ? "s" : ""}
+            </p>
+          </div>
+
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-200 text-sm font-medium ${
+              showFilters
+                ? "bg-indigo-50 border-indigo-300 text-indigo-700"
+                : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+            }`}
+          >
+            <Filter className="w-4 h-4" />
+            Filters
+          </button>
+        </div>
+
+        {/* Filters Panel */}
+        {showFilters && (
+          <div className="mt-4 p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Category
+                </label>
+                <select
+                  value={filterCategory}
+                  onChange={(e) => setFilterCategory(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+                >
+                  {categories.map((cat) => (
+                    <option key={cat.value} value={cat.value}>
+                      {cat.icon ? `${cat.icon} ` : ""}
+                      {cat.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Type
+                </label>
+                <select
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+                >
+                  {typeOptions.map((type) => (
+                    <option key={type.value} value={type.value}>
+                      {type.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                setFilterCategory("all");
+                setFilterType("all");
+              }}
+              className="mt-3 text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+            >
+              Clear all filters
+            </button>
+          </div>
+        )}
+
+        {/* Transactions List */}
+        <div className="mt-6 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          {filteredTransactions.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              No transactions found.
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-100">
+              {filteredTransactions.map((transaction) => (
+                <div
+                  key={transaction.id}
+                  className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div className="text-gray-400 cursor-grab hidden sm:block">
+                      <GripVertical className="w-5 h-5" />
+                    </div>
+
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-lg flex items-center justify-center text-lg sm:text-xl">
+                      {transaction.icon}
+                    </div>
+
+                    <div>
+                      <p className="font-medium text-gray-800 text-sm sm:text-base">
+                        {transaction.title}
+                      </p>
+                      <p className="text-xs sm:text-sm text-gray-500">
+                        {transaction.category} · {transaction.date}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Amount & Actions */}
+                  <div className="flex items-center gap-2 sm:gap-4">
+                    <p
+                      className={`font-semibold text-sm sm:text-base ${
+                        transaction.type === "income"
+                          ? "text-emerald-500"
+                          : "text-red-500"
+                      }`}
+                    >
+                      {transaction.type === "income" ? "+" : "-"}
+                      {formatCurrency(transaction.amount)}
+                    </p>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-1 sm:gap-2">
+                      <button
+                        onClick={() => handleEdit(transaction)}
+                        className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                        title="Edit"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => setDeleteConfirmId(transaction.id)}
+                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Delete"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Edit Modal */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setIsEditModalOpen(false)}
+          />
+
+          {/* Modal */}
+          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 space-y-5">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Edit Transaction
+              </h3>
+              <button
+                onClick={() => setIsEditModalOpen(false)}
+                className="p-1 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {/* Title */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Title
+                </label>
+                <input
+                  type="text"
+                  value={editForm.title}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, title: e.target.value })
+                  }
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+                  placeholder="Transaction title"
+                />
+              </div>
+
+              {/* Category */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Category
+                </label>
+                <select
+                  value={editForm.category}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, category: e.target.value })
+                  }
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+                >
+                  {categories.slice(1).map((cat) => (
+                    <option key={cat.value} value={cat.value}>
+                      {cat.icon} {cat.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Amount */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Amount
+                </label>
+                <input
+                  type="number"
+                  value={editForm.amount}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, amount: e.target.value })
+                  }
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+                  placeholder="0.00"
+                  step="0.01"
+                />
+              </div>
+
+              {/* Type */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Type
+                </label>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setEditForm({ ...editForm, type: "expense" })
+                    }
+                    className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                      editForm.type === "expense"
+                        ? "bg-red-100 text-red-700 border-2 border-red-300"
+                        : "bg-gray-100 text-gray-600 border-2 border-transparent hover:bg-gray-200"
+                    }`}
+                  >
+                    Expense
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditForm({ ...editForm, type: "income" })}
+                    className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                      editForm.type === "income"
+                        ? "bg-emerald-100 text-emerald-700 border-2 border-emerald-300"
+                        : "bg-gray-100 text-gray-600 border-2 border-transparent hover:bg-gray-200"
+                    }`}
+                  >
+                    Income
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={() => setIsEditModalOpen(false)}
+                className="flex-1 py-2.5 px-4 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveEdit}
+                className="flex-1 py-2.5 px-4 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setDeleteConfirmId(null)}
+          />
+
+          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 text-center">
+            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Trash2 className="w-6 h-6 text-red-600" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">
+              Delete Transaction
+            </h3>
+            <p className="text-gray-500 text-sm mb-6">
+              Are you sure you want to delete this transaction? This action
+              cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeleteConfirmId(null)}
+                className="flex-1 py-2.5 px-4 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDelete(deleteConfirmId)}
+                className="flex-1 py-2.5 px-4 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
