@@ -5,7 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { User } from '../../auth/entities/user.entity';
 
 export enum TransactionType {
   EXPENSE = 'expense',
@@ -16,6 +19,9 @@ export enum TransactionType {
 export class Transaction {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column()
+  title: string;
 
   @Column({
     type: 'enum',
@@ -31,6 +37,13 @@ export class Transaction {
 
   @Column({ nullable: true })
   desc: string;
+
+  @Column()
+  userId: string;
+
+  @ManyToOne(() => User, (user) => user.transactions)
+  @JoinColumn({ name: 'userId' })
+  user: User;
 
   @CreateDateColumn()
   createdAt: Date;
