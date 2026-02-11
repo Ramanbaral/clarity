@@ -6,11 +6,21 @@ import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import Login from "./pages/auth/Login.tsx";
 import SignUp from "./pages/auth/SignUp.tsx";
+import Transactions from "./pages/Transactions.tsx";
+import Add from "./pages/Add.tsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+  },
+  {
+    path: "/transactions",
+    element: <Transactions />,
+  },
+  {
+    path: "/add",
+    element: <Add />,
   },
   {
     path: "/login",
