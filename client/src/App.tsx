@@ -1,9 +1,10 @@
 import "./App.css";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
     <>
-      <p className="font-bold text-blue-500 grid place-content-center h-screen">Clarity</p>
+      <Dashboard />
     </>
   );
 }
