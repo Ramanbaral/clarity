@@ -8,20 +8,9 @@ import Login from "./pages/auth/Login.tsx";
 import SignUp from "./pages/auth/SignUp.tsx";
 import Transactions from "./pages/Transactions.tsx";
 import Add from "./pages/Add.tsx";
+import ProtectedRoute from "./routes/ProtectedRoutes.tsx";
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-  },
-  {
-    path: "/transactions",
-    element: <Transactions />,
-  },
-  {
-    path: "/add",
-    element: <Add />,
-  },
   {
     path: "/login",
     element: <Login />,
@@ -29,6 +18,24 @@ const router = createBrowserRouter([
   {
     path: "/signup",
     element: <SignUp />,
+  },
+  //Protected routes
+  {
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "/",
+        element: <App />,
+      },
+      {
+        path: "/transactions",
+        element: <Transactions />,
+      },
+      {
+        path: "/add",
+        element: <Add />,
+      },
+    ],
   },
 ]);
 

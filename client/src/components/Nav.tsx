@@ -1,4 +1,4 @@
-import { NavLink as RouterNavLink } from "react-router";
+import { NavLink as RouterNavLink, useNavigate } from "react-router";
 import {
   LayoutDashboard,
   List,
@@ -7,7 +7,8 @@ import {
   Moon,
   User,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getUserFromToken, logout, type UserInfo } from "../utils/auth";
 
 const navItems = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -18,10 +19,23 @@ const navItems = [
 export default function Nav() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [user, setUser] = useState<UserInfo>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const userInfo = getUserFromToken();
+    setUser(userInfo);
+  }, []);
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
     // Add actual theme toggle logic here
+  };
+
+  const handleLogout = () => {
+    logout();
+    setIsProfileOpen(false);
+    navigate("/login");
   };
 
   return (
@@ -89,12 +103,14 @@ export default function Nav() {
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                   <div className="px-4 py-2 border-b border-gray-100">
                     <p className="text-sm font-medium text-gray-800">
-                      Raman Baral
+                      {user?.username || "user"}
                     </p>
-                    <p className="text-xs text-gray-500">rambo</p>
                   </div>
                   <hr className="my-1 border-gray-100" />
-                  <button className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                  >
                     Sign Out
                   </button>
                 </div>
