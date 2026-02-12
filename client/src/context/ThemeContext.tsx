@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import type { ReactNode } from "react";
 
 type Theme = "light" | "dark";
 
@@ -15,7 +16,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     // Check localStorage first
     const savedTheme = localStorage.getItem("theme") as Theme;
     if (savedTheme) return savedTheme;
-    
+
     // Check system preference
     if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
       return "dark";
@@ -26,7 +27,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Update localStorage
     localStorage.setItem("theme", theme);
-    
+
     // Update document class
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
@@ -40,7 +41,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, isDark: theme === "dark" }}>
+    <ThemeContext.Provider
+      value={{ theme, toggleTheme, isDark: theme === "dark" }}
+    >
       {children}
     </ThemeContext.Provider>
   );

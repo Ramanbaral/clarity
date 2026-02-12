@@ -96,7 +96,10 @@ function Dashboard() {
 
       const monthTransactions = transactions.filter((t) => {
         const tDate = new Date(t.createdAt);
-        return `${tDate.getFullYear()}-${String(tDate.getMonth() + 1).padStart(2, "0")}` === monthYear;
+        return (
+          `${tDate.getFullYear()}-${String(tDate.getMonth() + 1).padStart(2, "0")}` ===
+          monthYear
+        );
       });
 
       const monthIncome = monthTransactions
@@ -107,7 +110,11 @@ function Dashboard() {
         .filter((t) => t.type === "expense")
         .reduce((sum, t) => sum + (parseFloat(String(t.amount)) || 0), 0);
 
-      months.push({ name: monthName, income: monthIncome, expense: monthExpense });
+      months.push({
+        name: monthName,
+        income: monthIncome,
+        expense: monthExpense,
+      });
     }
 
     return months;
@@ -123,7 +130,10 @@ function Dashboard() {
       .filter((t) => t.type === "expense")
       .forEach((t) => {
         const current = categoryMap.get(t.category) || 0;
-        categoryMap.set(t.category, current + (parseFloat(String(t.amount)) || 0));
+        categoryMap.set(
+          t.category,
+          current + (parseFloat(String(t.amount)) || 0),
+        );
       });
 
     return Array.from(categoryMap.entries()).map(([name, value]) => ({
@@ -137,7 +147,10 @@ function Dashboard() {
 
   // Get recent transactions
   const recentTransactions = [...transactions]
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    )
     .slice(0, 5);
 
   const formatCurrency = (amount: number) => {
@@ -237,8 +250,9 @@ function Dashboard() {
                       borderRadius: "8px",
                       boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
                     }}
+                    // @ts-expect-error ...
                     formatter={(value: number, name: string) => [
-                      `$${value.toLocaleString()}`,
+                      `$${value?.toLocaleString()}`,
                       name === "income" ? "Income" : "Expense",
                     ]}
                   />
@@ -280,6 +294,7 @@ function Dashboard() {
                       borderRadius: "8px",
                       boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
                     }}
+                    // @ts-expect-error ...
                     formatter={(value: number) => [
                       `$${value.toLocaleString()}`,
                     ]}
@@ -335,24 +350,30 @@ function Dashboard() {
                 >
                   <div className="flex items-center gap-2 sm:gap-3">
                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-sm sm:text-lg">
-                      {categoryIcons[transaction.category?.toLowerCase()] || "📦"}
+                      {categoryIcons[transaction.category?.toLowerCase()] ||
+                        "📦"}
                     </div>
                     <div>
                       <p className="font-medium text-gray-800 dark:text-white text-sm sm:text-base">
                         {transaction.title}
                       </p>
                       <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                        {new Date(transaction.createdAt).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
+                        {new Date(transaction.createdAt).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          },
+                        )}
                       </p>
                     </div>
                   </div>
                   <p
                     className={`font-semibold text-sm sm:text-base ${
-                      transaction.type === "income" ? "text-emerald-500" : "text-red-500"
+                      transaction.type === "income"
+                        ? "text-emerald-500"
+                        : "text-red-500"
                     }`}
                   >
                     {transaction.type === "income" ? "+" : "-"}
