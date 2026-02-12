@@ -1,6 +1,8 @@
 import Nav from "../components/Nav";
 import { useState } from "react";
-import { ArrowRight, ArrowLeft, Check } from "lucide-react";
+import { ArrowRight, ArrowLeft, Check, Loader2 } from "lucide-react";
+import authenticatedApi from "../api/authenticatedAxiosInstance";
+import toast, { Toaster } from "react-hot-toast";
 
 // Expense category options
 const expenseCategories = [
@@ -26,8 +28,10 @@ const incomeCategories = [
 
 function Add() {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     type: "expense",
+    title: "",
     amount: "",
     date: new Date().toISOString().split("T")[0],
     category: "",
@@ -46,12 +50,33 @@ function Add() {
     }
   };
 
-  const handleSubmit = () => {
-    // Handle form submission
+  const handleSubmit = async () => {
     console.log("Transaction added:", formData);
+    setIsSubmitting(true);
+    //get the formData and create a transaction using the API
+    try {
+      const response = await authenticatedApi.post("/transaction", {
+        title: formData.title,
+        amount: parseFloat(formData.amount),
+        type: formData.type,
+        category: formData.category,
+        desc: formData.description,
+      });
+      console.log("API response:", response.data);
+      toast.success("Transaction added successfully!");
+    } catch (error) {
+      toast.error("Failed to add transaction. Please try again.");
+      console.error("Error adding transaction:", error);
+      setIsSubmitting(false);
+      return;
+    }
+
+    setIsSubmitting(false);
+
     // Reset form
     setFormData({
       type: "expense",
+      title: "",
       amount: "",
       date: new Date().toISOString().split("T")[0],
       category: "",
@@ -80,7 +105,10 @@ function Add() {
   const currentCategories =
     formData.type === "expense" ? expenseCategories : incomeCategories;
 
-  const canProceedStep1 = formData.amount && parseFloat(formData.amount) > 0;
+  const canProceedStep1 =
+    formData.title.trim() !== "" &&
+    formData.amount &&
+    parseFloat(formData.amount) > 0;
   const canProceedStep2 = formData.category !== "";
 
   return (
@@ -153,6 +181,22 @@ function Add() {
                     <span>💰</span> Income
                   </button>
                 </div>
+              </div>
+
+              {/* Title */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Title
+                </label>
+                <input
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
+                  }
+                  placeholder="e.g., Grocery shopping, Monthly salary"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none text-sm"
+                />
               </div>
 
               {/* Amount */}
@@ -280,6 +324,12 @@ function Add() {
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Title</span>
+                  <span className="font-medium text-gray-800">
+                    {formData.title}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Amount</span>
                   <span className="font-semibold text-gray-800">
                     {formatCurrency(formData.amount)}
@@ -303,21 +353,32 @@ function Add() {
               <div className="flex justify-between pt-2">
                 <button
                   onClick={handleBack}
-                  className="flex items-center gap-2 px-4 py-2.5 text-gray-600 font-medium hover:text-gray-800 transition-colors"
+                  disabled={isSubmitting}
+                  className="flex items-center gap-2 px-4 py-2.5 text-gray-600 font-medium hover:text-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <ArrowLeft className="w-4 h-4" /> Back
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 transition-colors"
+                  disabled={isSubmitting}
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 disabled:bg-emerald-400 disabled:cursor-not-allowed transition-colors"
                 >
-                  <Check className="w-4 h-4" /> Add Transaction
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" /> Adding...
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-4 h-4" /> Add Transaction
+                    </>
+                  )}
                 </button>
               </div>
             </div>
           )}
         </div>
       </div>
+      <Toaster />
     </div>
   );
 }
