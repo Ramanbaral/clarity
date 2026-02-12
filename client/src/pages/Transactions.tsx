@@ -68,6 +68,7 @@ function Transactions() {
 
   // Edit modal state
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [editingTransaction, setEditingTransaction] =
     useState<Transaction | null>(null);
   const [editForm, setEditForm] = useState({
@@ -126,9 +127,10 @@ function Transactions() {
   };
 
   // Handle save edit
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (!editingTransaction) return;
 
+    setIsUpdating(true);
     const categoryInfo = categories.find((c) => c.value === editForm.category);
 
     setTransactions((prev) =>
@@ -145,6 +147,21 @@ function Transactions() {
           : t,
       ),
     );
+    // Here you would also send the updated transaction to the backend
+    try {
+      await authenticatedApi.patch(`/transaction/${editingTransaction.id}`, {
+        title: editForm.title,
+        category: editForm.category,
+        type: editForm.type,
+        amount: editForm.amount,
+      });
+      toast.success("Transaction updated.");
+    } catch (error) {
+      console.error("Error updating transaction:", error);
+      toast.error("Failed to update transaction.");
+    } finally {
+      setIsUpdating(false);
+    }
     setIsEditModalOpen(false);
     setEditingTransaction(null);
   };
@@ -430,15 +447,23 @@ function Transactions() {
             <div className="flex gap-3 pt-2">
               <button
                 onClick={() => setIsEditModalOpen(false)}
-                className="flex-1 py-2.5 px-4 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+                disabled={isUpdating}
+                className="flex-1 py-2.5 px-4 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSaveEdit}
-                className="flex-1 py-2.5 px-4 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors"
+                disabled={isUpdating}
+                className="flex-1 py-2.5 px-4 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors disabled:bg-indigo-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Save Changes
+                {isUpdating ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" /> Saving...
+                  </>
+                ) : (
+                  "Save Changes"
+                )}
               </button>
             </div>
           </div>
