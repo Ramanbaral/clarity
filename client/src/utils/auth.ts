@@ -16,7 +16,6 @@ export const getUserFromToken = (): UserInfo => {
 
   try {
     const decoded = jwtDecode<JwtPayload>(token);
-    console.log("Decoded token:", decoded);
     return {
       username: decoded.username || "user",
     };
@@ -32,7 +31,6 @@ export const getUserIdFromToken = (): string | null => {
 
   try {
     const decoded = jwtDecode<JwtPayload>(token);
-    console.log("Decoded token:", decoded);
     return decoded.userId || null;
   } catch (error) {
     console.error("Error decoding token:", error);
