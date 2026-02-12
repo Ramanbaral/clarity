@@ -1,5 +1,6 @@
 import Nav from "../components/Nav";
-import { Wallet, TrendingUp, TrendingDown } from "lucide-react";
+import { Wallet, TrendingUp, TrendingDown, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -13,19 +14,36 @@ import {
   Cell,
   Legend,
 } from "recharts";
+import authenticatedApi from "../api/authenticatedAxiosInstance";
 
-// Sample data for bar chart - Monthly Overview
-const monthlyData = [
-  { name: "Sep", amount: 0 },
-  { name: "Oct", amount: 0 },
-  { name: "Nov", amount: 0 },
-  { name: "Dec", amount: 0 },
-  { name: "Jan", amount: 0 },
-  { name: "Feb", amount: 1000 },
-];
+interface Transaction {
+  id: number;
+  title: string;
+  category: string;
+  amount: number;
+  type: string;
+  createdAt: string;
+  icon?: string;
+}
 
-// Sample data for pie chart - Spending by Category
-const categoryData = [{ name: "Food & Dining", value: 1000, icon: "🍽️" }];
+// Category icon mapping
+const categoryIcons: Record<string, string> = {
+  food: "🍽️",
+  transport: "🚗",
+  housing: "🏠",
+  utilities: "⚡",
+  entertainment: "🎬",
+  shopping: "🛍️",
+  health: "💊",
+  education: "📚",
+  salary: "💵",
+  investment: "📈",
+  freelance: "💻",
+  rent: "🏢",
+  other_expense: "📌",
+  other_income: "💎",
+  other: "📦",
+};
 
 const COLORS = [
   "#22c55e",
@@ -37,9 +55,90 @@ const COLORS = [
 ];
 
 function Dashboard() {
-  const balance = -1000.0;
-  const income = 0.0;
-  const expenses = 1000.0;
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      setIsLoading(true);
+      try {
+        const response = await authenticatedApi.get("/transaction");
+        setTransactions(response.data);
+      } catch (error) {
+        console.error("Error fetching transactions:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchTransactions();
+  }, []);
+
+  // Calculate totals
+  const income = transactions
+    .filter((t) => t.type === "income")
+    .reduce((sum, t) => sum + (parseFloat(String(t.amount)) || 0), 0);
+
+  const expenses = transactions
+    .filter((t) => t.type === "expense")
+    .reduce((sum, t) => sum + (parseFloat(String(t.amount)) || 0), 0);
+
+  const balance = income - expenses;
+
+  // Generate monthly data for bar chart (last 6 months)
+  const getMonthlyData = () => {
+    const months: { name: string; income: number; expense: number }[] = [];
+    const now = new Date();
+
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthName = date.toLocaleString("default", { month: "short" });
+      const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+
+      const monthTransactions = transactions.filter((t) => {
+        const tDate = new Date(t.createdAt);
+        return `${tDate.getFullYear()}-${String(tDate.getMonth() + 1).padStart(2, "0")}` === monthYear;
+      });
+
+      const monthIncome = monthTransactions
+        .filter((t) => t.type === "income")
+        .reduce((sum, t) => sum + (parseFloat(String(t.amount)) || 0), 0);
+
+      const monthExpense = monthTransactions
+        .filter((t) => t.type === "expense")
+        .reduce((sum, t) => sum + (parseFloat(String(t.amount)) || 0), 0);
+
+      months.push({ name: monthName, income: monthIncome, expense: monthExpense });
+    }
+
+    return months;
+  };
+
+  const monthlyData = getMonthlyData();
+
+  // Generate category data for pie chart
+  const getCategoryData = () => {
+    const categoryMap = new Map<string, number>();
+
+    transactions
+      .filter((t) => t.type === "expense")
+      .forEach((t) => {
+        const current = categoryMap.get(t.category) || 0;
+        categoryMap.set(t.category, current + (parseFloat(String(t.amount)) || 0));
+      });
+
+    return Array.from(categoryMap.entries()).map(([name, value]) => ({
+      name,
+      value,
+      icon: categoryIcons[name.toLowerCase()] || "📦",
+    }));
+  };
+
+  const categoryData = getCategoryData();
+
+  // Get recent transactions
+  const recentTransactions = [...transactions]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 5);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -138,12 +237,13 @@ function Dashboard() {
                       borderRadius: "8px",
                       boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
                     }}
-                    formatter={(value: number) => [
+                    formatter={(value: number, name: string) => [
                       `$${value.toLocaleString()}`,
-                      "Amount",
+                      name === "income" ? "Income" : "Expense",
                     ]}
                   />
-                  <Bar dataKey="amount" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="income" fill="#22c55e" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="expense" fill="#ef4444" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -219,25 +319,48 @@ function Dashboard() {
             Recent Transactions
           </h3>
           <div className="space-y-2 sm:space-y-3">
-            {/* Transaction Items */}
-            <div className="flex items-center justify-between py-2 sm:py-3 border-b border-gray-100 last:border-b-0">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 rounded-full flex items-center justify-center text-sm sm:text-lg">
-                  🍽️
-                </div>
-                <div>
-                  <p className="font-medium text-gray-800 text-sm sm:text-base">
-                    test
-                  </p>
-                  <p className="text-xs sm:text-sm text-gray-500">
-                    Feb 11, 2026
-                  </p>
-                </div>
+            {isLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin text-purple-600" />
               </div>
-              <p className="font-semibold text-red-500 text-sm sm:text-base">
-                -$1,000.00
-              </p>
-            </div>
+            ) : recentTransactions.length === 0 ? (
+              <div className="text-center py-8 text-gray-500 text-sm">
+                No transactions yet.
+              </div>
+            ) : (
+              recentTransactions.map((transaction) => (
+                <div
+                  key={transaction.id}
+                  className="flex items-center justify-between py-2 sm:py-3 border-b border-gray-100 last:border-b-0"
+                >
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 rounded-full flex items-center justify-center text-sm sm:text-lg">
+                      {categoryIcons[transaction.category?.toLowerCase()] || "📦"}
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-800 text-sm sm:text-base">
+                        {transaction.title}
+                      </p>
+                      <p className="text-xs sm:text-sm text-gray-500">
+                        {new Date(transaction.createdAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                  <p
+                    className={`font-semibold text-sm sm:text-base ${
+                      transaction.type === "income" ? "text-emerald-500" : "text-red-500"
+                    }`}
+                  >
+                    {transaction.type === "income" ? "+" : "-"}
+                    {formatCurrency(transaction.amount)}
+                  </p>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

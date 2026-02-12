@@ -24,6 +24,31 @@ const typeOptions = [
   { value: "expense", label: "Expense" },
 ];
 
+// Category icon mapping
+const categoryIcons: Record<string, string> = {
+  food: "🍽️",
+  transport: "🚗",
+  housing: "🏠",
+  utilities: "⚡",
+  entertainment: "🎬",
+  shopping: "🛍️",
+  health: "💊",
+  education: "📚",
+  salary: "💵",
+  investment: "📈",
+  freelance: "💻",
+  rent: "🏢",
+  other_expense: "📌",
+  other_income: "💎",
+  transportation: "🚗",
+  bills: "📄",
+  other: "📦",
+};
+
+const getCategoryIcon = (category: string): string => {
+  return categoryIcons[category?.toLowerCase()] || "📦";
+};
+
 interface Transaction {
   id: number;
   title: string;
@@ -240,7 +265,7 @@ function Transactions() {
                     </div>
 
                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-lg flex items-center justify-center text-lg sm:text-xl">
-                      {transaction.icon}
+                      {getCategoryIcon(transaction.category)}
                     </div>
 
                     <div>
