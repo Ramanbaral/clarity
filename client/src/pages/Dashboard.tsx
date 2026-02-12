@@ -149,21 +149,21 @@ function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <Nav />
       <div className="pt-20 pb-8 px-4 sm:px-6 lg:px-10 max-w-7xl mx-auto">
-        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-blue-500">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-blue-500 dark:text-blue-400">
           Overview
         </h2>
-        <p className="text-gray-500 text-xs sm:text-sm mt-1">
+        <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm mt-1">
           Your financial snapshot
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mt-4 sm:mt-6">
           {/* Balance Card */}
-          <div className="bg-gray-100 rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-md sm:shadow-lg">
+          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-md sm:shadow-lg">
             <div className="flex items-center justify-between">
-              <span className="text-gray-600 text-xs sm:text-sm font-medium">
+              <span className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm font-medium">
                 Balance
               </span>
               <Wallet className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500" />
@@ -179,9 +179,9 @@ function Dashboard() {
           </div>
 
           {/* Income Card */}
-          <div className="bg-gray-100 rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-md sm:shadow-lg">
+          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-md sm:shadow-lg">
             <div className="flex items-center justify-between">
-              <span className="text-gray-600 text-xs sm:text-sm font-medium">
+              <span className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm font-medium">
                 Income
               </span>
               <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500" />
@@ -192,9 +192,9 @@ function Dashboard() {
           </div>
 
           {/* Expenses Card */}
-          <div className="bg-gray-100 rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-md sm:shadow-lg sm:col-span-2 lg:col-span-1">
+          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-md sm:shadow-lg sm:col-span-2 lg:col-span-1">
             <div className="flex items-center justify-between">
-              <span className="text-gray-600 text-xs sm:text-sm font-medium">
+              <span className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm font-medium">
                 Expenses
               </span>
               <TrendingDown className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
@@ -208,8 +208,8 @@ function Dashboard() {
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6">
           {/* Monthly Overview - Bar Chart */}
-          <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-md sm:shadow-lg border border-gray-100">
-            <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-md sm:shadow-lg border border-gray-100 dark:border-gray-700">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-white mb-3 sm:mb-4">
               Monthly Overview
             </h3>
             <div className="h-52 sm:h-64 md:h-72">
@@ -250,8 +250,8 @@ function Dashboard() {
           </div>
 
           {/* Spending by Category - Pie Chart */}
-          <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-md sm:shadow-lg border border-gray-100">
-            <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-md sm:shadow-lg border border-gray-100 dark:border-gray-700">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-white mb-3 sm:mb-4">
               Spending by Category
             </h3>
             <div className="h-52 sm:h-64 md:h-72">
@@ -314,8 +314,8 @@ function Dashboard() {
         </div>
 
         {/* Recent Transactions */}
-        <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-md sm:shadow-lg border border-gray-100 mt-4 sm:mt-6">
-          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-md sm:shadow-lg border border-gray-100 dark:border-gray-700 mt-4 sm:mt-6">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-white mb-3 sm:mb-4">
             Recent Transactions
           </h3>
           <div className="space-y-2 sm:space-y-3">
@@ -324,24 +324,24 @@ function Dashboard() {
                 <Loader2 className="w-6 h-6 animate-spin text-purple-600" />
               </div>
             ) : recentTransactions.length === 0 ? (
-              <div className="text-center py-8 text-gray-500 text-sm">
+              <div className="text-center py-8 text-gray-500 dark:text-gray-400 text-sm">
                 No transactions yet.
               </div>
             ) : (
               recentTransactions.map((transaction) => (
                 <div
                   key={transaction.id}
-                  className="flex items-center justify-between py-2 sm:py-3 border-b border-gray-100 last:border-b-0"
+                  className="flex items-center justify-between py-2 sm:py-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0"
                 >
                   <div className="flex items-center gap-2 sm:gap-3">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 rounded-full flex items-center justify-center text-sm sm:text-lg">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-sm sm:text-lg">
                       {categoryIcons[transaction.category?.toLowerCase()] || "📦"}
                     </div>
                     <div>
-                      <p className="font-medium text-gray-800 text-sm sm:text-base">
+                      <p className="font-medium text-gray-800 dark:text-white text-sm sm:text-base">
                         {transaction.title}
                       </p>
-                      <p className="text-xs sm:text-sm text-gray-500">
+                      <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                         {new Date(transaction.createdAt).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",

@@ -112,41 +112,41 @@ function Add() {
   const canProceedStep2 = formData.category !== "";
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <Nav />
       <div className="pt-20 pb-8 px-4 sm:px-6 lg:px-10 max-w-2xl mx-auto">
         <div className="mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-800">
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-800 dark:text-white">
             Add Transaction
           </h2>
-          <p className="text-gray-500 text-sm mt-1">Step {currentStep} of 3</p>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Step {currentStep} of 3</p>
         </div>
 
         {/* Progress Bar */}
         <div className="flex gap-2 mb-6">
           <div
             className={`h-1.5 flex-1 rounded-full transition-colors ${
-              currentStep >= 1 ? "bg-emerald-500" : "bg-gray-200"
+              currentStep >= 1 ? "bg-emerald-500" : "bg-gray-200 dark:bg-gray-700"
             }`}
           />
           <div
             className={`h-1.5 flex-1 rounded-full transition-colors ${
-              currentStep >= 2 ? "bg-emerald-500" : "bg-gray-200"
+              currentStep >= 2 ? "bg-emerald-500" : "bg-gray-200 dark:bg-gray-700"
             }`}
           />
           <div
             className={`h-1.5 flex-1 rounded-full transition-colors ${
-              currentStep >= 3 ? "bg-emerald-500" : "bg-gray-200"
+              currentStep >= 3 ? "bg-emerald-500" : "bg-gray-200 dark:bg-gray-700"
             }`}
           />
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 sm:p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-5 sm:p-6">
           {/* Step 1: Type, Amount, Date */}
           {currentStep === 1 && (
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                   Type
                 </label>
                 <div className="flex gap-3">
@@ -161,8 +161,8 @@ function Add() {
                     }
                     className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg text-sm font-medium transition-all ${
                       formData.type === "expense"
-                        ? "bg-red-50 text-red-700 border-2 border-red-300"
-                        : "bg-gray-50 text-gray-600 border-2 border-gray-200 hover:bg-gray-100"
+                        ? "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-2 border-red-300 dark:border-red-700"
+                        : "bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-2 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600"
                     }`}
                   >
                     <span>💸</span> Expense
@@ -174,8 +174,8 @@ function Add() {
                     }
                     className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg text-sm font-medium transition-all ${
                       formData.type === "income"
-                        ? "bg-emerald-50 text-emerald-700 border-2 border-emerald-300"
-                        : "bg-gray-50 text-gray-600 border-2 border-gray-200 hover:bg-gray-100"
+                        ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-700"
+                        : "bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-2 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600"
                     }`}
                   >
                     <span>💰</span> Income
@@ -185,7 +185,7 @@ function Add() {
 
               {/* Title */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Title
                 </label>
                 <input
@@ -195,17 +195,17 @@ function Add() {
                     setFormData({ ...formData, title: e.target.value })
                   }
                   placeholder="e.g., Grocery shopping, Monthly salary"
-                  className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none text-sm"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none text-sm"
                 />
               </div>
 
               {/* Amount */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Amount
                 </label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
                     $
                   </span>
                   <input
@@ -216,14 +216,14 @@ function Add() {
                     }
                     placeholder="0.00"
                     step="0.01"
-                    className="w-full pl-8 pr-4 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none text-sm"
+                    className="w-full pl-8 pr-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none text-sm"
                   />
                 </div>
               </div>
 
               {/* Date */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Date
                 </label>
                 <input
@@ -232,7 +232,7 @@ function Add() {
                   onChange={(e) =>
                     setFormData({ ...formData, date: e.target.value })
                   }
-                  className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none text-sm"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none text-sm"
                 />
               </div>
 
@@ -241,7 +241,7 @@ function Add() {
                 <button
                   onClick={handleNext}
                   disabled={!canProceedStep1}
-                  className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors"
                 >
                   Next <ArrowRight className="w-4 h-4" />
                 </button>
@@ -253,7 +253,7 @@ function Add() {
           {currentStep === 2 && (
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                   Category
                 </label>
                 <div className="grid grid-cols-3 gap-3">
@@ -266,8 +266,8 @@ function Add() {
                       }
                       className={`flex flex-col items-center gap-2 py-4 px-2 rounded-xl text-xs sm:text-sm font-medium transition-all ${
                         formData.category === category.value
-                          ? "bg-emerald-50 text-emerald-700 border-2 border-emerald-400"
-                          : "bg-gray-50 text-gray-600 border-2 border-transparent hover:bg-gray-100"
+                          ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-2 border-emerald-400 dark:border-emerald-700"
+                          : "bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-2 border-transparent hover:bg-gray-100 dark:hover:bg-gray-600"
                       }`}
                     >
                       <span className="text-2xl sm:text-3xl">
@@ -283,14 +283,14 @@ function Add() {
               <div className="flex justify-between pt-2">
                 <button
                   onClick={handleBack}
-                  className="flex items-center gap-2 px-4 py-2.5 text-gray-600 font-medium hover:text-gray-800 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2.5 text-gray-600 dark:text-gray-300 font-medium hover:text-gray-800 dark:hover:text-white transition-colors"
                 >
                   <ArrowLeft className="w-4 h-4" /> Back
                 </button>
                 <button
                   onClick={handleNext}
                   disabled={!canProceedStep2}
-                  className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors"
                 >
                   Next <ArrowRight className="w-4 h-4" />
                 </button>
@@ -302,7 +302,7 @@ function Add() {
           {currentStep === 3 && (
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Description (optional)
                 </label>
                 <textarea
@@ -312,39 +312,39 @@ function Add() {
                   }
                   placeholder="Add a note..."
                   rows={4}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none text-sm resize-none"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none text-sm resize-none"
                 />
               </div>
 
-              <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Type</span>
-                  <span className="font-medium text-gray-800 capitalize">
+                  <span className="text-gray-500 dark:text-gray-400">Type</span>
+                  <span className="font-medium text-gray-800 dark:text-white capitalize">
                     {formData.type}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Title</span>
-                  <span className="font-medium text-gray-800">
+                  <span className="text-gray-500 dark:text-gray-400">Title</span>
+                  <span className="font-medium text-gray-800 dark:text-white">
                     {formData.title}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Amount</span>
-                  <span className="font-semibold text-gray-800">
+                  <span className="text-gray-500 dark:text-gray-400">Amount</span>
+                  <span className="font-semibold text-gray-800 dark:text-white">
                     {formatCurrency(formData.amount)}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Category</span>
-                  <span className="font-medium text-gray-800">
+                  <span className="text-gray-500 dark:text-gray-400">Category</span>
+                  <span className="font-medium text-gray-800 dark:text-white">
                     {getCategoryInfo(formData.category)?.icon}{" "}
                     {getCategoryInfo(formData.category)?.label}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Date</span>
-                  <span className="font-medium text-gray-800">
+                  <span className="text-gray-500 dark:text-gray-400">Date</span>
+                  <span className="font-medium text-gray-800 dark:text-white">
                     {formData.date}
                   </span>
                 </div>
@@ -354,7 +354,7 @@ function Add() {
                 <button
                   onClick={handleBack}
                   disabled={isSubmitting}
-                  className="flex items-center gap-2 px-4 py-2.5 text-gray-600 font-medium hover:text-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 px-4 py-2.5 text-gray-600 dark:text-gray-300 font-medium hover:text-gray-800 dark:hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <ArrowLeft className="w-4 h-4" /> Back
                 </button>

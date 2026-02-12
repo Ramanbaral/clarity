@@ -180,15 +180,15 @@ function Transactions() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <Nav />
       <div className="pt-20 pb-8 px-4 sm:px-6 lg:px-10 max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-800">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-800 dark:text-white">
               Transactions
             </h2>
-            <p className="text-gray-500 text-xs sm:text-sm mt-1">
+            <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm mt-1">
               {filteredTransactions.length} transaction
               {filteredTransactions.length !== 1 ? "s" : ""}
             </p>
@@ -198,8 +198,8 @@ function Transactions() {
             onClick={() => setShowFilters(!showFilters)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-200 text-sm font-medium ${
               showFilters
-                ? "bg-indigo-50 border-indigo-300 text-indigo-700"
-                : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                ? "bg-indigo-50 dark:bg-indigo-900 border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300"
+                : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
             }`}
           >
             <Filter className="w-4 h-4" />
@@ -209,16 +209,16 @@ function Transactions() {
 
         {/* Filters Panel */}
         {showFilters && (
-          <div className="mt-4 p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
+          <div className="mt-4 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Category
                 </label>
                 <select
                   value={filterCategory}
                   onChange={(e) => setFilterCategory(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
                 >
                   {categories.map((cat) => (
                     <option key={cat.value} value={cat.value}>
@@ -230,13 +230,13 @@ function Transactions() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Type
                 </label>
                 <select
                   value={filterType}
                   onChange={(e) => setFilterType(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
                 >
                   {typeOptions.map((type) => (
                     <option key={type.value} value={type.value}>
@@ -252,7 +252,7 @@ function Transactions() {
                 setFilterCategory("all");
                 setFilterType("all");
               }}
-              className="mt-3 text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+              className="mt-3 text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium"
             >
               Clear all filters
             </button>
@@ -260,36 +260,36 @@ function Transactions() {
         )}
 
         {/* Transactions List */}
-        <div className="mt-6 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="mt-6 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
             </div>
           ) : filteredTransactions.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-gray-500 dark:text-gray-400">
               No transactions found.
             </div>
           ) : (
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-gray-100 dark:divide-gray-700">
               {filteredTransactions.map((transaction) => (
                 <div
                   key={transaction.id}
-                  className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 >
                   <div className="flex items-center gap-3 sm:gap-4">
-                    <div className="text-gray-400 cursor-grab hidden sm:block">
+                    <div className="text-gray-400 dark:text-gray-500 cursor-grab hidden sm:block">
                       <GripVertical className="w-5 h-5" />
                     </div>
 
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-lg flex items-center justify-center text-lg sm:text-xl">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center text-lg sm:text-xl">
                       {getCategoryIcon(transaction.category)}
                     </div>
 
                     <div>
-                      <p className="font-medium text-gray-800 text-sm sm:text-base">
+                      <p className="font-medium text-gray-800 dark:text-white text-sm sm:text-base">
                         {transaction.title}
                       </p>
-                      <p className="text-xs sm:text-sm text-gray-500">
+                      <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                         {transaction.category} ·{" "}
                         {new Date(transaction.createdAt).toLocaleDateString()}
                       </p>
@@ -313,14 +313,14 @@ function Transactions() {
                     <div className="flex items-center gap-1 sm:gap-2">
                       <button
                         onClick={() => handleEdit(transaction)}
-                        className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                        className="p-2 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors"
                         title="Edit"
                       >
                         <Pencil className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => setDeleteConfirmId(transaction.id)}
-                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                         title="Delete"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -343,14 +343,14 @@ function Transactions() {
           />
 
           {/* Modal */}
-          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 space-y-5">
+          <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md p-6 space-y-5">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-800">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
                 Edit Transaction
               </h3>
               <button
                 onClick={() => setIsEditModalOpen(false)}
-                className="p-1 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
+                className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -359,7 +359,7 @@ function Transactions() {
             <div className="space-y-4">
               {/* Title */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Title
                 </label>
                 <input
@@ -368,14 +368,14 @@ function Transactions() {
                   onChange={(e) =>
                     setEditForm({ ...editForm, title: e.target.value })
                   }
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
                   placeholder="Transaction title"
                 />
               </div>
 
               {/* Category */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Category
                 </label>
                 <select
@@ -383,7 +383,7 @@ function Transactions() {
                   onChange={(e) =>
                     setEditForm({ ...editForm, category: e.target.value })
                   }
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
                 >
                   {categories.slice(1).map((cat) => (
                     <option key={cat.value} value={cat.value}>
@@ -395,7 +395,7 @@ function Transactions() {
 
               {/* Amount */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Amount
                 </label>
                 <input
@@ -404,7 +404,7 @@ function Transactions() {
                   onChange={(e) =>
                     setEditForm({ ...editForm, amount: e.target.value })
                   }
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
                   placeholder="0.00"
                   step="0.01"
                 />
@@ -412,7 +412,7 @@ function Transactions() {
 
               {/* Type */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Type
                 </label>
                 <div className="flex gap-3">
@@ -423,8 +423,8 @@ function Transactions() {
                     }
                     className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all ${
                       editForm.type === "expense"
-                        ? "bg-red-100 text-red-700 border-2 border-red-300"
-                        : "bg-gray-100 text-gray-600 border-2 border-transparent hover:bg-gray-200"
+                        ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-2 border-red-300 dark:border-red-700"
+                        : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-2 border-transparent hover:bg-gray-200 dark:hover:bg-gray-600"
                     }`}
                   >
                     Expense
@@ -434,8 +434,8 @@ function Transactions() {
                     onClick={() => setEditForm({ ...editForm, type: "income" })}
                     className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all ${
                       editForm.type === "income"
-                        ? "bg-emerald-100 text-emerald-700 border-2 border-emerald-300"
-                        : "bg-gray-100 text-gray-600 border-2 border-transparent hover:bg-gray-200"
+                        ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-700"
+                        : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-2 border-transparent hover:bg-gray-200 dark:hover:bg-gray-600"
                     }`}
                   >
                     Income
@@ -448,7 +448,7 @@ function Transactions() {
               <button
                 onClick={() => setIsEditModalOpen(false)}
                 disabled={isUpdating}
-                className="flex-1 py-2.5 px-4 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 py-2.5 px-4 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Cancel
               </button>
@@ -478,21 +478,21 @@ function Transactions() {
             onClick={() => setDeleteConfirmId(null)}
           />
 
-          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 text-center">
-            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Trash2 className="w-6 h-6 text-red-600" />
+          <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-sm p-6 text-center">
+            <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Trash2 className="w-6 h-6 text-red-600 dark:text-red-400" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
               Delete Transaction
             </h3>
-            <p className="text-gray-500 text-sm mb-6">
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
               Are you sure you want to delete this transaction? This action
               cannot be undone.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setDeleteConfirmId(null)}
-                className="flex-1 py-2.5 px-4 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+                className="flex-1 py-2.5 px-4 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 Cancel
               </button>
