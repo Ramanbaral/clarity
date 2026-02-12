@@ -1,19 +1,8 @@
 import Nav from "../components/Nav";
-import { useState } from "react";
-import { Filter, Pencil, Trash2, X, GripVertical } from "lucide-react";
-
-// Sample transaction data
-const sampleTransactions = [
-  {
-    id: 1,
-    title: "Investment",
-    category: "Investment",
-    amount: 1000.0,
-    type: "income",
-    date: "Feb 11, 2026",
-    icon: "📈",
-  },
-];
+import { useState, useEffect } from "react";
+import { Filter, Pencil, Trash2, X, GripVertical, Loader2 } from "lucide-react";
+import authenticatedApi from "../api/authenticatedAxiosInstance";
+import toast, { Toaster } from "react-hot-toast";
 
 // Category options
 const categories = [
@@ -41,13 +30,13 @@ interface Transaction {
   category: string;
   amount: number;
   type: string;
-  date: string;
+  createdAt: string;
   icon: string;
 }
 
 function Transactions() {
-  const [transactions, setTransactions] =
-    useState<Transaction[]>(sampleTransactions);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterType, setFilterType] = useState("all");
@@ -65,6 +54,22 @@ function Transactions() {
 
   // Delete confirmation state
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      setIsLoading(true);
+      try {
+        const response = await authenticatedApi.get("/transaction");
+        console.log("Fetched transactions:", response.data);
+        setTransactions(response.data);
+      } catch (error) {
+        console.error("Error fetching transactions:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchTransactions();
+  }, []);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -120,9 +125,16 @@ function Transactions() {
   };
 
   // Handle delete
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     setTransactions((prev) => prev.filter((t) => t.id !== id));
     setDeleteConfirmId(null);
+    try {
+      await authenticatedApi.delete(`/transaction/${id}`);
+      toast.success("Transaction deleted.");
+    } catch (error) {
+      console.error("Error deleting transaction:", error);
+      toast.error("Failed to delete transaction.");
+    }
   };
 
   return (
@@ -207,7 +219,11 @@ function Transactions() {
 
         {/* Transactions List */}
         <div className="mt-6 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-          {filteredTransactions.length === 0 ? (
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+            </div>
+          ) : filteredTransactions.length === 0 ? (
             <div className="text-center py-12 text-gray-500">
               No transactions found.
             </div>
@@ -232,7 +248,8 @@ function Transactions() {
                         {transaction.title}
                       </p>
                       <p className="text-xs sm:text-sm text-gray-500">
-                        {transaction.category} · {transaction.date}
+                        {transaction.category} ·{" "}
+                        {new Date(transaction.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
@@ -439,6 +456,7 @@ function Transactions() {
           </div>
         </div>
       )}
+      <Toaster />
     </div>
   );
 }

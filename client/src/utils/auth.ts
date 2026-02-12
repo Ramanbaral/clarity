@@ -3,6 +3,7 @@ import { jwtDecode } from "jwt-decode";
 type JwtPayload = {
   exp: number;
   username?: string;
+  userId?: string;
 };
 
 export type UserInfo = {
@@ -19,6 +20,20 @@ export const getUserFromToken = (): UserInfo => {
     return {
       username: decoded.username || "user",
     };
+  } catch (error) {
+    console.error("Error decoding token:", error);
+    return null;
+  }
+};
+
+export const getUserIdFromToken = (): string | null => {
+  const token = localStorage.getItem("accessToken");
+  if (!token) return null;
+
+  try {
+    const decoded = jwtDecode<JwtPayload>(token);
+    console.log("Decoded token:", decoded);
+    return decoded.userId || null;
   } catch (error) {
     console.error("Error decoding token:", error);
     return null;
